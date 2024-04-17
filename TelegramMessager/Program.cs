@@ -35,6 +35,8 @@ namespace TelegramMessager
                 while (true)
                 {
                     var sw = new Stopwatch();
+                    sw.Start();
+                    Console.WriteLine("Время сейчас - " + DateTime.Now);
                     text = "";
                     countMas = 0;
                     countM3 = 0;
@@ -44,7 +46,7 @@ namespace TelegramMessager
                         DateTime currentTime = DateTime.Now;
                         DateTime targetTime;
 
-                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 16, 38, 0);
+                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 52, 0);
                         //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
                         enumDateDayOrNight = EnumDayOrNight.Night;
                         TimeSpan timeUntilTarget = targetTime - currentTime;
@@ -58,12 +60,10 @@ namespace TelegramMessager
                     {
                         startTime = TimeSpan.FromMinutes(1);
                         //startTime = TimeSpan.FromHours(12);
-                        sw.Start();
                     }
 
 
                     var getDataTask = database.GetData();
-                    getDataTask.GetAwaiter().GetResult();
                     
                     if (getDataTask.Result == null)
                     {
@@ -105,6 +105,9 @@ namespace TelegramMessager
                     }
                     else
                     {
+                        double countMountMas = 0;
+                        double countMountM3 = 0;
+
                         text += "\nДень\n";
 
                         for (int i = 0; i < datas.Count; i++)
@@ -117,9 +120,6 @@ namespace TelegramMessager
                             }
                         }
 
-                        text += $"\nИтого - {countMas} массива / {countM3} m3";
-                        telegramBot.SendMessage(text);
-
                         if (DateTime.Now.Day == telegramBot.GetLastDay())
                         {
                             var getDataMountTask = database.GetMountData();
@@ -130,22 +130,23 @@ namespace TelegramMessager
                                 Console.WriteLine("Ошибка получения данных");
                                 continue;
                             }
+                            else
+                            {
+                                mounts.AddRange(getDataMountTask.Result);
+                            }
 
-                            countMas = 0;
-                            countM3 = 0;
-
-                            text = $"Информация за месяц с {mounts[0].GetFromDate()} по {mounts[0].GetByDate()}\n";
+                            text += $"\nИнформация за месяц с {mounts[0].GetFromDate().ToString("yyyy-MM-dd")} по {mounts[0].GetByDate().ToString("yyyy-MM-dd")}\n";
 
                             for (int i = 0; i < mounts.Count; i++)
                             {
                                     text += $"{mounts[i].Text} / {mounts[i].Count} массива / {mounts[i].LongCount} м3";
-                                    countMas += mounts[i].Count;
-                                    countM3 += mounts[i].LongCount;
+                                    countMountMas += mounts[i].Count;
+                                    countMountM3 += mounts[i].LongCount;
                             }
-
-                            text += $"\nИтого - {countMas} массива / {countM3} m3";
-                            telegramBot.SendMessage(text);
                         }
+
+                        text += $"\nИтого - {countMountMas} массива / {countMountM3} m3";
+                        telegramBot.SendMessage(text);
                     }
 
                     if (enumDateDayOrNight == EnumDayOrNight.Day)
@@ -156,14 +157,10 @@ namespace TelegramMessager
                     Console.WriteLine(text);
                     datas.Clear();
                     mounts.Clear();
-
-                    if (isFurstStart)
-                        isFurstStart = false;
                     sw.Stop();
                     startTime -= sw.Elapsed;
-                    Console.WriteLine("Ожидать до следующего вызова " + startTime);
+                    Console.WriteLine("Время окончания - " +DateTime.Now+ "\nОжидать до следующего вызова " + startTime + "\n");
                     Thread.Sleep(startTime);
-                    sw.Reset();
                 }
             }
             catch (Exception ex)

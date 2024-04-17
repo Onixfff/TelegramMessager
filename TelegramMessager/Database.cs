@@ -102,7 +102,6 @@ namespace TelegramMessager
                             mounts[0].AddFromDate(GetFirstDateTime());
                             mounts[0].AddByDate(GetLastDateTime());
                         }
-                        reader.Close();
                     }
                 }
             }
