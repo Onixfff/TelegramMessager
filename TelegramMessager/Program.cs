@@ -46,8 +46,8 @@ namespace TelegramMessager
                         DateTime currentTime = DateTime.Now;
                         DateTime targetTime;
 
-                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 52, 0);
-                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
+                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 52, 0);
+                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
                         enumDateDayOrNight = EnumDayOrNight.Night;
                         TimeSpan timeUntilTarget = targetTime - currentTime;
                         startTime = timeUntilTarget;
@@ -58,8 +58,8 @@ namespace TelegramMessager
                     }
                     else
                     {
-                        startTime = TimeSpan.FromMinutes(1);
-                        //startTime = TimeSpan.FromHours(12);
+                        //startTime = TimeSpan.FromMinutes(1);
+                        startTime = TimeSpan.FromHours(12);
                     }
 
 
@@ -120,6 +120,8 @@ namespace TelegramMessager
                             }
                         }
 
+                        text += $"\nИтого - {countMas} массива / {countM3} m3";
+
                         if (DateTime.Now.Day == telegramBot.GetLastDay())
                         {
                             var getDataMountTask = database.GetMountData();
@@ -135,7 +137,7 @@ namespace TelegramMessager
                                 mounts.AddRange(getDataMountTask.Result);
                             }
 
-                            text += $"\nИнформация за месяц с {mounts[0].GetFromDate().ToString("yyyy-MM-dd")} по {mounts[0].GetByDate().ToString("yyyy-MM-dd")}\n";
+                            text += $"\n\nИнформация за месяц с {mounts[0].GetFromDate().ToString("yyyy-MM-dd")} по {mounts[0].GetByDate().ToString("yyyy-MM-dd")}\n";
 
                             for (int i = 0; i < mounts.Count; i++)
                             {
@@ -145,7 +147,7 @@ namespace TelegramMessager
                             }
                         }
 
-                        text += $"\nИтого - {countMountMas} массива / {countMountM3} m3";
+                        text += $"\nИтого за месяц - {countMountMas} массива / {countMountM3} m3";
                         telegramBot.SendMessage(text);
                     }
 
