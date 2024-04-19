@@ -27,8 +27,7 @@ namespace TelegramMessager
 
         public int GetLastDay()
         {
-            int lastDay = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-            return 17;
+            return DateTime.Now.Day;
         }
     }
 }
