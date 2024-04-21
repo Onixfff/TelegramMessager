@@ -77,7 +77,7 @@ namespace TelegramMessager
 
                         datas.AddRange(getDataTask.Result);
 
-                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd")}";
+                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd-HH-mm")}";
                         text += "Ночь\n";
 
                         for (int i = 0; i < datas.Count; i++)
@@ -120,7 +120,7 @@ namespace TelegramMessager
                             mounts.AddRange(getDataMountTask.Result);
                         }
 
-                        text += $"\n\nИнформация за месяц с {mounts[0].GetFromDate().ToString("yyyy-MM-dd")} по {mounts[0].GetByDate().ToString("yyyy-MM-dd")}\n";
+                        text += $"\n\nИнформация за период с {mounts[0].GetFromDate().ToString("yyyy-MM-dd")} по {mounts[0].GetByDate().ToString("yyyy-MM-dd")}\n";
 
                         for (int i = 0; i < mounts.Count; i++)
                         {
@@ -129,7 +129,7 @@ namespace TelegramMessager
                             countMountM3 += mounts[i].LongCount;
                         }
 
-                        text += $"\nИтого за месяц - {countMountMas} массива / {countMountM3} m3";
+                        text += $"\nИтого за период - {countMountMas} массива / {countMountM3} m3";
                         telegramBot.SendMessage(text);
                     }
                     else
@@ -144,7 +144,7 @@ namespace TelegramMessager
 
                         datas.AddRange(getDataTask.Result);
 
-                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd")}";
+                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd-HH-mm")}";
                         text += "\nДень\n";
 
                         for (int i = 0; i < datas.Count; i++)
