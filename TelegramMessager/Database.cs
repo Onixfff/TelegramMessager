@@ -14,7 +14,7 @@ namespace TelegramMessager
         List<Data> datas;
         List<DataMount> mounts;
 
-        public async Task<List<Data>> GetData()
+        public async Task<List<Data>> GetDataNight()
         {
             datas = new List<Data>();
             DateTime thisDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day - 1);
@@ -68,6 +68,63 @@ namespace TelegramMessager
             finally { _mCon.Close(); }
             
             return datas;
+        }
+
+        public async Task<List<Data>> GetDataDay()
+        {
+            datas = new List<Data>();
+            DateTime thisDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            string query = $"SELECT if (time(Timestamp) < '08:00:00',date_format(date_sub(Timestamp, INTERVAL 1 DAY), \"%d %M %Y\"), date_format(Timestamp, \"%d %M %Y\")) as df, if (time(Timestamp) <= '20:00:00' and time(Timestamp)>= '08:00:00','день','ночь') as shift, data_52, count(dbid)-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and(if (time(Timestamp) < '08:00:00',date_format(date_sub(Timestamp, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(Timestamp, \"%d %M %Y\")))= ( if (time(ms.data_err) < '08:00:00',date_format(date_sub(ms.data_err, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(ms.data_err, \"%d %M %Y\")))and(if (time(Timestamp) <= '20:00:00' and time(Timestamp)>= '08:00:00','день','ночь'))= (if (time(ms.data_err) <= '20:00:00' and time(ms.data_err)>= '08:00:00','день','ночь'))) as count_1, round(((count(dbid)-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and(if (time(Timestamp) < '08:00:00',date_format(date_sub(Timestamp, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(Timestamp, \"%d %M %Y\")))= ( if (time(ms.data_err) < '08:00:00',date_format(date_sub(ms.data_err, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(ms.data_err, \"%d %M %Y\")))and(if (time(Timestamp) <= '20:00:00' and time(Timestamp)>= '08:00:00','день','ночь'))= (if (time(ms.data_err) <= '20:00:00' and time(ms.data_err)>= '08:00:00','день','ночь')))) * '4.32'), 2) as mas from spslogger.mixreport as mr where Timestamp >= '{thisDay:yyyy-MM-dd} 08:00:00' and Timestamp < concat( date_add('{thisDay:yyyy-MM-dd}', interval 1 day), ' 08:00:00')  group by df,shift, data_52";
+
+            try
+            {
+                await _mCon.OpenAsync();
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            try
+            {
+                using (MySqlCommand command = new MySqlCommand(query, _mCon))
+                {
+                    var s = _mCon.State;
+
+                    using (MySqlDataReader reader = (MySqlDataReader)await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            EnumDayOrNight enumDay = new EnumDayOrNight();
+                            var two = reader.GetString(1);
+
+                            if (two == "день")
+                                enumDay = EnumDayOrNight.Day;
+                            else
+                                continue;
+
+                            datas.Add(new Data(
+                                reader.GetString(0),
+                                enumDay,
+                                reader.GetString(2),
+                                reader.GetInt32(3),
+                                reader.GetDouble(4)));
+                        }
+                        reader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally { _mCon.Close(); }
+
+            return datas;
+            
         }
 
         public async Task<List<DataMount>> GetMountData()

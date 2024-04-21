@@ -18,9 +18,9 @@ namespace TelegramMessager
                 bool isFurstStart = true;
                 List<People> peoples = new List<People>()
                 {
-                    new People(787471566)
-                    //new People(961317657) Владимир Викторович
-                    //new People(1973965023) Татьяна Владимировна
+                    new People(787471566),
+                    new People(961317657), //Владимир Викторович
+                    new People(1973965023) //Татьяна Владимировна
                 };
 
                 EnumDayOrNight enumDateDayOrNight = EnumDayOrNight.Night;
@@ -47,8 +47,9 @@ namespace TelegramMessager
                         DateTime currentTime = DateTime.Now;
                         DateTime targetTime;
 
-                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 57, 0);
-                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
+                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 57, 0);
+                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
+                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0);
                         enumDateDayOrNight = EnumDayOrNight.Night;
                         TimeSpan timeUntilTarget = targetTime - currentTime;
                         startTime = timeUntilTarget;
@@ -59,24 +60,24 @@ namespace TelegramMessager
                     }
                     else
                     {
-                        startTime = TimeSpan.FromMinutes(1);
-                        //startTime = TimeSpan.FromHours(12);
+                        //startTime = TimeSpan.FromMinutes(1);
+                        startTime = TimeSpan.FromHours(12);
                     }
 
-
-                    var getDataTask = database.GetData();
-                    
-                    if (getDataTask.Result == null)
-                    {
-                        Console.WriteLine("Ошибка получения данных");
-                        continue;
-                    }
-
-                    datas.AddRange(getDataTask.Result);
 
                     if (enumDateDayOrNight == EnumDayOrNight.Night)
                     {
+                        var getDataTask = database.GetDataNight();
 
+                        if (getDataTask.Result == null)
+                        {
+                            Console.WriteLine("Ошибка получения данных");
+                            continue;
+                        }
+
+                        datas.AddRange(getDataTask.Result);
+
+                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd")}";
                         text += "Ночь\n";
 
                         for (int i = 0; i < datas.Count; i++)
@@ -133,6 +134,17 @@ namespace TelegramMessager
                     }
                     else
                     {
+                        var getDataTask = database.GetDataDay();
+
+                        if (getDataTask.Result == null)
+                        {
+                            Console.WriteLine("Ошибка получения данных");
+                            continue;
+                        }
+
+                        datas.AddRange(getDataTask.Result);
+
+                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd")}";
                         text += "\nДень\n";
 
                         for (int i = 0; i < datas.Count; i++)
