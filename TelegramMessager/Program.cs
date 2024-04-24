@@ -49,7 +49,7 @@ namespace TelegramMessager
 
                         //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 57, 0);
                         targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
-                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0);
+                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 12, 0, 0);
                         enumDateDayOrNight = EnumDayOrNight.Night;
                         TimeSpan timeUntilTarget = targetTime - currentTime;
                         startTime = timeUntilTarget;
@@ -62,8 +62,9 @@ namespace TelegramMessager
                     {
                         //startTime = TimeSpan.FromMinutes(1);
                         startTime = TimeSpan.FromHours(12);
+                        //startTime = TimeSpan.FromHours(12);
                     }
-
+                        
 
                     if (enumDateDayOrNight == EnumDayOrNight.Night)
                     {
@@ -78,7 +79,7 @@ namespace TelegramMessager
                         datas.AddRange(getDataTask.Result);
 
                         text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd-HH-mm")}";
-                        text += "Ночь\n";
+                        text += "\nНочь\n";
 
                         for (int i = 0; i < datas.Count; i++)
                         {
