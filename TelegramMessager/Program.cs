@@ -1,10 +1,7 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
-using Telegram.Bot.Types;
 
 namespace TelegramMessager
 {
