@@ -48,8 +48,8 @@ namespace TelegramMessager
                         DateTime targetTime;
 
                         //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 57, 0);
-                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
-                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 13, 0, 0);
+                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
+                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 13, 0, 0);
                         enumDateDayOrNight = EnumDayOrNight.Night;
                         TimeSpan timeUntilTarget = targetTime - currentTime;
                         startTime = timeUntilTarget;
@@ -61,8 +61,8 @@ namespace TelegramMessager
                     else
                     {
                         //startTime = TimeSpan.FromMinutes(1);
-                        startTime = TimeSpan.FromHours(7);
-                        //startTime = TimeSpan.FromHours(12);
+                        //startTime = TimeSpan.FromHours(7);
+                        startTime = TimeSpan.FromHours(12);
                     }
                         
 
