@@ -127,7 +127,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="DataMount.cs" />
     <Compile Include="EnumDayOrNight.cs" />
     <Compile Include="People.cs" />
     <Compile Include="Program.cs" />
