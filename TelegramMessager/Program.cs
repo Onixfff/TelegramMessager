@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Protobuf.WellKnownTypes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -42,23 +43,59 @@ namespace TelegramMessager
                     if (isFurstStart)
                     {
                         DateTime currentTime = DateTime.Now;
-                        DateTime targetTime;
+                        TimeSpan targetTime;
 
-                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 17, 57, 0);
-                        targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 8, 5, 0).AddDays(1);
-                        //targetTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, 13, 0, 0);
-                        enumDateDayOrNight = EnumDayOrNight.Night;
-                        TimeSpan timeUntilTarget = targetTime - currentTime;
-                        startTime = timeUntilTarget;
+                        if (currentTime.TimeOfDay >= new TimeSpan(8,5,0) && currentTime.TimeOfDay < new TimeSpan(20,5,0) ) 
+                        {
+                            enumDateDayOrNight = EnumDayOrNight.Day;
+
+                            var hour = currentTime.Hour;
+                            var minut = currentTime.Minute;
+                            var second = currentTime.Second;
+
+                            targetTime =  new TimeSpan(20, 5, 0) - new TimeSpan(hour, minut, second);
+                        }
+                        else
+                        {
+                            enumDateDayOrNight = EnumDayOrNight.Night;
+
+                            var hour = currentTime.Hour;
+                            var minut = currentTime.Minute;
+                            var second = currentTime.Second;
+
+                            targetTime = new TimeSpan(8,5,0) - new TimeSpan(hour, minut, second);
+
+                            hour = targetTime.Hours;
+                            minut = targetTime.Minutes;
+                            second = targetTime.Minutes;
+
+                            if(hour < 0)
+                            {
+                                hour *= -1;
+                            }
+
+                            if (minut < 0)
+                            {
+                                hour *= -1;
+                            }
+
+                            if(second < 0)
+                            {
+                                second *= -1;
+                            }
+
+                            targetTime = new TimeSpan(hour, minut, second);
+                        }
+
                         isFurstStart = false;
-                        Console.WriteLine($"Ожидает до {targetTime}\nНадо прождать {startTime}");
+
+                        startTime = targetTime;
+                        Console.WriteLine($"Ожидает до 8:05:00\nНадо прождать {startTime}");
                         Thread.Sleep(startTime);
                         continue;
                     }
                     else
                     {
-                        //startTime = TimeSpan.FromMinutes(1);
-                        //startTime = TimeSpan.FromHours(7);
                         startTime = TimeSpan.FromHours(12);
                     }
                         
