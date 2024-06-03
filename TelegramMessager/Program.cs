@@ -117,32 +117,33 @@ namespace TelegramMessager
 
                         datas.AddRange(getDataTask.Result);
 
-                        text += $"Дата {dateTimeNow.ToString("yyyy-MM-dd-HH-mm")}";
-                        text += "\nНочь\n";
+                        text += $"Дата {dateTimeNow.ToString("(yyyy-MM-dd) (HH:mm)")}";
+                        text += "\n\n                                 Ночь\n";
 
                         for (int i = 0; i < datas.Count; i++)
                         {
                             if (datas[i].IsDay == EnumDayOrNight.Night)
                             {
-                                text += $"{datas[i].Text} / {datas[i].Count} массива / {datas[i].LongCount} м3";
+                                text += $"{datas[i].Text} / {datas[i].Count} массива / {datas[i].LongCount} м3\n";
                                 countMas += datas[i].Count;
                                 countM3 += datas[i].LongCount;
                             }
                         }
 
-                        text += "\nДень\n";
+                        text += "\n                                 День\n";
 
                         for(int i = 0; i < datas.Count; i++)
                         {
                             if (datas[i].IsDay == EnumDayOrNight.Day)
                             {
-                                text += $"{datas[i].Text} / {datas[i].Count} массива / {datas[i].LongCount} м3";
+                                text += $"{datas[i].Text} / {datas[i].Count} массива / {datas[i].LongCount} м3\n";
                                 countMas += datas[i].Count;
                                 countM3 += datas[i].LongCount;
                             }
                         }
 
-                        text += $"\nИтого - {countMas} массива / {countM3} m3";
+                        text += $"\n                                 Итоги\n" +
+                            $"{countMas} массива / {countM3} m3";
 
                         double countMountMas = 0;
                         double countMountM3 = 0;
@@ -160,16 +161,17 @@ namespace TelegramMessager
                             mounts.AddRange(getDataMountTask.Result);
                         }
 
-                        text += $"\n\nИнформация за период с {mounts[0].GetFromDate().ToString("yyyy-MM-dd")} по {mounts[0].GetByDate().ToString("yyyy-MM-dd")}\n";
+                        text += $"\n\n               Информация за период\n" +
+                            $"            с {mounts[0].GetFromDate().ToString("yyyy-MM-dd")} по {mounts[0].GetByDate().ToString("yyyy-MM-dd")}\n\n";
 
                         for (int i = 0; i < mounts.Count; i++)
                         {
-                            text += $"{mounts[i].Text} / {mounts[i].Count} массива / {mounts[i].LongCount} м3";
+                            text += $"{mounts[i].Text} / {mounts[i].Count} массива / {mounts[i].LongCount} м3\n";
                             countMountMas += mounts[i].Count;
                             countMountM3 += mounts[i].LongCount;
                         }
 
-                        text += $"\nИтого за период - {countMountMas} массива / {countMountM3} m3";
+                        text += $"\n               Итоги за этот периуд\n {countMountMas} массива / {countMountM3} m3";
                         telegramBot.SendMessage(text);
                     }
                     else
@@ -184,20 +186,21 @@ namespace TelegramMessager
 
                         datas.AddRange(getDataTask.Result);
 
-                        text += $"Дата {dateTimeNow.ToString("yyyy-MM-dd-HH-mm")}";
-                        text += "\nДень\n";
+                        text += $"Дата {dateTimeNow.ToString("(yyyy-MM-dd) (HH:mm)")}";
+                        text += "\n\n                                 День\n";
 
                         for (int i = 0; i < datas.Count; i++)
                         {
                             if (datas[i].IsDay == EnumDayOrNight.Day)
                             {
-                                text += $"{datas[i].Text} / {datas[i].Count} массива / {datas[i].LongCount} м3";
+                                text += $"{datas[i].Text} / {datas[i].Count} массива / {datas[i].LongCount} м3\n";
                                 countMas += datas[i].Count;
                                 countM3 += datas[i].LongCount;
                             }
                         }
 
-                        text += $"\nИтого - {countMas} массива / {countM3} m3";
+                        text += $"\n                                 Итого\n" +
+                            $"{countMas} массива / {countM3} m3";
                         telegramBot.SendMessage(text);
                     }
 

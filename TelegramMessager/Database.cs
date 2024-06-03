@@ -17,7 +17,7 @@ namespace TelegramMessager
 
         public Database()
         {
-            _dateTimeNow = DateTimeNow.GetDateTimeNow();
+            _dateTimeNow = _dateTimeClass.GetDateTimeNow();
             _dateTimeFirstMount =_dateTimeClass.GetFirstDateTimeMount();
             _dateTimeMinus1Day = _dateTimeClass.GetDateTimeMinus1Day();
         }
@@ -31,18 +31,17 @@ namespace TelegramMessager
 
             try
             {
-                await _mCon.OpenAsync();
-            }
-            catch(MySqlException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            try
-            {
+                try
+                {
+                    if (_mCon.State == System.Data.ConnectionState.Closed)
+                        await _mCon.OpenAsync();
+                }
+                catch (MySqlException)
+                {
+                    goto Select;
+                }
+
+            Select:
                 using (MySqlCommand command = new MySqlCommand(query, _mCon))
                 {
                     var s = _mCon.State;
@@ -84,21 +83,19 @@ namespace TelegramMessager
             datas = new List<Data>();
             DateTime thisDay = _dateTimeNow;
             string query = $"SELECT if (time(Timestamp) < '08:00:00',date_format(date_sub(Timestamp, INTERVAL 1 DAY), \"%d %M %Y\"), date_format(Timestamp, \"%d %M %Y\")) as df, if (time(Timestamp) <= '20:00:00' and time(Timestamp)>= '08:00:00','день','ночь') as shift, data_52, count(dbid)-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and(if (time(Timestamp) < '08:00:00',date_format(date_sub(Timestamp, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(Timestamp, \"%d %M %Y\")))= ( if (time(ms.data_err) < '08:00:00',date_format(date_sub(ms.data_err, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(ms.data_err, \"%d %M %Y\")))and(if (time(Timestamp) <= '20:00:00' and time(Timestamp)>= '08:00:00','день','ночь'))= (if (time(ms.data_err) <= '20:00:00' and time(ms.data_err)>= '08:00:00','день','ночь'))) as count_1, round(((count(dbid)-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and(if (time(Timestamp) < '08:00:00',date_format(date_sub(Timestamp, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(Timestamp, \"%d %M %Y\")))= ( if (time(ms.data_err) < '08:00:00',date_format(date_sub(ms.data_err, INTERVAL 1 DAY), \"%d %M %Y\"),date_format(ms.data_err, \"%d %M %Y\")))and(if (time(Timestamp) <= '20:00:00' and time(Timestamp)>= '08:00:00','день','ночь'))= (if (time(ms.data_err) <= '20:00:00' and time(ms.data_err)>= '08:00:00','день','ночь')))) * '4.32'), 2) as mas from spslogger.mixreport as mr where Timestamp >= '{thisDay:yyyy-MM-dd} 08:00:00' and Timestamp < concat( date_add('{thisDay:yyyy-MM-dd}', interval 1 day), ' 08:00:00')  group by df,shift, data_52";
+            try
+            {
+                try
+                {
+                    if(_mCon.State == System.Data.ConnectionState.Closed)
+                        await _mCon.OpenAsync();
+                }
+                catch (MySqlException)
+                {
+                    goto Select;
+                }
 
-            try
-            {
-                await _mCon.OpenAsync();
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            try
-            {
+            Select:
                 using (MySqlCommand command = new MySqlCommand(query, _mCon))
                 {
                     var s = _mCon.State;
@@ -145,18 +142,17 @@ namespace TelegramMessager
 
             try
             {
-                await _mCon.OpenAsync();
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            try
-            {
+                try
+                {
+                    if (_mCon.State == System.Data.ConnectionState.Closed)
+                        await _mCon.OpenAsync();
+                }
+                catch (MySqlException)
+                {
+                    goto Select;
+                }
+
+            Select:
                 using (MySqlCommand command = new MySqlCommand(query, _mCon))
                 {
                     var s = _mCon.State;
