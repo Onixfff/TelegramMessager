@@ -7,12 +7,13 @@ using System.Threading;
 namespace TelegramMessager
 {
     public class Program
-    { 
+    {
+        private static DateTimeNow DateTimeNow = new DateTimeNow();
+
         static void Main(string[] args)
         {
             try
             {
-                TimeSpan startTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
                 bool isFurstStart = true;
                 List<People> peoples = new List<People>()
                 {
@@ -33,16 +34,20 @@ namespace TelegramMessager
 
                 while (true)
                 {
+                    DateTimeNow.ChangeDateTime();
+                    DateTime dateTimeNow = DateTimeNow.GetDateTimeNow();
+                    TimeSpan startTime = new TimeSpan(dateTimeNow.Hour, dateTimeNow.Minute, dateTimeNow.Second);
+
                     var sw = new Stopwatch();
                     sw.Start();
-                    Console.WriteLine("Время сейчас - " + DateTime.Now);
+                    Console.WriteLine("Время сейчас - " + dateTimeNow);
                     text = "";
                     countMas = 0;
                     countM3 = 0;
 
                     if (isFurstStart)
                     {
-                        DateTime currentTime = DateTime.Now;
+                        DateTime currentTime = dateTimeNow;
                         TimeSpan targetTime;
 
                         if (currentTime.TimeOfDay >= new TimeSpan(8,5,0) && currentTime.TimeOfDay < new TimeSpan(20,5,0) ) 
@@ -112,7 +117,7 @@ namespace TelegramMessager
 
                         datas.AddRange(getDataTask.Result);
 
-                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd-HH-mm")}";
+                        text += $"Дата {dateTimeNow.ToString("yyyy-MM-dd-HH-mm")}";
                         text += "\nНочь\n";
 
                         for (int i = 0; i < datas.Count; i++)
@@ -179,7 +184,7 @@ namespace TelegramMessager
 
                         datas.AddRange(getDataTask.Result);
 
-                        text += $"Дата {DateTime.Now.ToString("yyyy-MM-dd-HH-mm")}";
+                        text += $"Дата {dateTimeNow.ToString("yyyy-MM-dd-HH-mm")}";
                         text += "\nДень\n";
 
                         for (int i = 0; i < datas.Count; i++)
@@ -206,7 +211,7 @@ namespace TelegramMessager
                     mounts.Clear();
                     sw.Stop();
                     startTime -= sw.Elapsed;
-                    Console.WriteLine("Время окончания - " +DateTime.Now+ "\nОжидать до следующего вызова " + startTime + "\n");
+                    Console.WriteLine("Время окончания - " + dateTimeNow + "\nОжидать до следующего вызова " + startTime + "\n");
                     Thread.Sleep(startTime);
                 }
             }

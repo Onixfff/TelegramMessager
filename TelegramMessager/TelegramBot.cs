@@ -24,10 +24,5 @@ namespace TelegramMessager
                 Thread.Sleep(5000);
             }
         }
-
-        public int GetLastDay()
-        {
-            return DateTime.Now.Day;
-        }
     }
 }
