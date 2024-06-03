@@ -17,8 +17,7 @@ namespace TelegramMessager
 
         public void ChangeDateTime()
         {
-            //_dateTimeNow = DateTime.Now;
-            _dateTimeNow = new DateTime(2024, 6,1, 20,4,59);
+            _dateTimeNow = DateTime.Now;
         }
 
         public DateTime GetFirstDateTimeMount()
