@@ -8,8 +8,7 @@ namespace TelegramMessager
 {
     public class DateTimeNow
     {
-        private DateTime _dateTimeNow = DateTime.Now;
-
+       private DateTime _dateTimeNow = DateTime.Now;
         public DateTime GetDateTimeNow()
         {
             return _dateTimeNow;
