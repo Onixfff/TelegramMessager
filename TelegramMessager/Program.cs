@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -18,12 +17,11 @@ namespace TelegramMessager
                 List<People> peoples = new List<People>()
                 {
                     new People(787471566),
-                    //new People(961317657), //Владимир Викторович
-                    //new People(1973965023) //Татьяна Владимировна
+                    new People(961317657), //Владимир Викторович
+                    new People(1973965023) //Татьяна Владимировна
                 };
 
                 EnumDayOrNight enumDateDayOrNight = EnumDayOrNight.Night;
-
                 Database database = new Database();
                 TelegramBot telegramBot = new TelegramBot(peoples);
                 List<Data> datas = new List<Data>();
