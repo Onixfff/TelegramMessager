@@ -15,11 +15,6 @@ namespace TelegramMessager
         List<Data> datas;
         List<DataMount> mounts;
 
-        public Database()
-        {
-
-        }
-
         public async Task<List<Data>> GetDataNight()
         {
             datas = new List<Data>();
