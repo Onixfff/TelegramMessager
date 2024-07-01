@@ -17,8 +17,8 @@ namespace TelegramMessager
                 List<People> peoples = new List<People>()
                 {
                     new People(787471566),
-                    //new People(961317657), //Владимир Викторович
-                    //new People(1973965023) //Татьяна Владимировна
+                    new People(961317657), //Владимир Викторович
+                    new People(1973965023) //Татьяна Владимировна
                 };
 
                 EnumDayOrNight enumDateDayOrNight = EnumDayOrNight.Night;
@@ -146,7 +146,7 @@ namespace TelegramMessager
                         double countMountMas = 0;
                         double countMountM3 = 0;
 
-                        var getDataMountTask = database.GetMountData();
+                        var getDataMountTask = database.GetMountData(enumDateDayOrNight);
                         getDataMountTask.GetAwaiter().GetResult();
 
                         if (getDataMountTask.Result == null)
