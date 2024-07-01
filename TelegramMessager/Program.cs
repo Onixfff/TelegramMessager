@@ -17,8 +17,8 @@ namespace TelegramMessager
                 List<People> peoples = new List<People>()
                 {
                     new People(787471566),
-                    //new People(961317657), //Владимир Викторович
-                    //new People(1973965023) //Татьяна Владимировна
+                    new People(961317657), //Владимир Викторович
+                    new People(1973965023) //Татьяна Владимировна
                 };
 
                 EnumDayOrNight enumDateDayOrNight = EnumDayOrNight.Night;
