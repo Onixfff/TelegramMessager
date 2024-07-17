@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace TelegramMessager
 {
@@ -31,13 +32,13 @@ namespace TelegramMessager
             }
             if (!onlyInstance)
             {
-                Console.WriteLine("Попытка запуска копии программы", procName);
+                MessageBox.Show("Попытка запуска копии программы", procName);
                 Thread.Sleep(10000);
                 return;
             }
             else
             {
-                Console.WriteLine("Запуск программы", procName);
+                MessageBox.Show("Запуск программы", procName);
 
                 try
                 {
