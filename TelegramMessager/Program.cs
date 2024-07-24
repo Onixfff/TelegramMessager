@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Mysqlx;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -9,9 +11,12 @@ namespace TelegramMessager
     public class Program
     {
         private static DateTimeNow DateTimeNow = new DateTimeNow();
-
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        
         static void Main(string[] args)
         {
+            logger.Trace("Запуск программы !");
+
             bool onlyInstance = true;
             string procName = Process.GetCurrentProcess().ProcessName;
             Properties.Settings.Default.procname = procName;
@@ -24,32 +29,50 @@ namespace TelegramMessager
                 if (process.ProcessName.Contains(procName))
                 {
                     c++;
+
                     if (c > 1)
                     {
                         onlyInstance = false;
+
+                        string error = "Нашёл такой же процесс";
+
+                        logger.Trace(error);
+                        logger.Debug(error);
+                        logger.Fatal(error);
                     }
                 }
             }
+
+            logger.Trace($"onlyInstance = {onlyInstance}.");
+
             if (!onlyInstance)
             {
                 MessageBox.Show("Попытка запуска копии программы", procName);
+
+                logger.Trace($"Попытка запуска копии программы " + procName);
+                logger.Debug($"Попытка запуска копии программы " + procName);
+                logger.Fatal($"Попытка запуска копии программы " + procName);
+
                 Thread.Sleep(10000);
                 return;
             }
             else
             {
                 MessageBox.Show("Запуск программы", procName);
+                logger.Trace($"Запуск программы " + procName);
 
                 try
                 {
+                    logger.Trace($"Начал проход по try в Program");
+
                     bool isFurstStart = true;
                     List<People> peoples = new List<People>()
-                {
-                    new People(787471566),
-                    new People(961317657), //Владимир Викторович
-                    new People(1973965023), //Татьяна Владимировна
-                    new People(805032669) // Артем Данишевский
-                };
+                    {
+                        new People(787471566),
+                        new People(961317657), //Владимир Викторович
+                        new People(1973965023), //Татьяна Владимировна
+                        new People(805032669) // Артем Данишевский
+                    };
 
                     EnumDayOrNight enumDateDayOrNight = EnumDayOrNight.Night;
                     Database database = new Database();
@@ -62,6 +85,7 @@ namespace TelegramMessager
 
                     while (true)
                     {
+                        logger.Trace($"Попытка запуска копии программы " + procName);
                         DateTimeNow.ChangeDateTime();
                         DateTime dateTimeNow = DateTimeNow.GetDateTimeNow();
                         TimeSpan startTime = new TimeSpan(dateTimeNow.Hour, dateTimeNow.Minute, dateTimeNow.Second);
