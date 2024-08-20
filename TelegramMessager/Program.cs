@@ -153,8 +153,8 @@ namespace TelegramMessager
 
                             startTime = targetTime;
 
-                            logger.Trace($"Ожидает до 8:05:00\nНадо прождать {startTime}");
-                            Console.WriteLine($"Ожидает до 8:05:00\nНадо прождать {startTime}");
+                            logger.Trace($"Ожидает до {startTime} время сейчас {dateTimeNow}");
+                            Console.WriteLine($"Ожидает до {startTime} время сейчас {dateTimeNow}");
                             Thread.Sleep(startTime);
                             continue;
                         }
