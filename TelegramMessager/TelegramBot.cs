@@ -8,22 +8,23 @@ namespace TelegramMessager
     public class TelegramBot
     {
         private List<People> _peoples = null;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private ILogger _logger;
 
-        public TelegramBot(List<People> peoples)
+        public TelegramBot(List<People> peoples, ILogger logger)
         {
-            logger.Trace($"Инициализация TelegramBot");
+            _logger.Trace($"Инициализация TelegramBot");
             _peoples = peoples;
+            _logger = logger;
         }
 
         public async void SendMessage( string text)
         {
-            logger.Trace($"Вход в метод по отправке сообщения из телеграмм бота");
+            _logger.Trace($"Вход в метод по отправке сообщения из телеграмм бота");
             TelegramBotClient botClient = new TelegramBotClient("6797439955:AAHA_jPPUvpRdIVdIEt2ZeTPkXketnLEnro");
 
             for (int i = 0; i < _peoples.Count; i++)
             {
-                logger.Trace($"Отправка сообщения {_peoples[i].ChatId} и что отправляет {text}");
+                _logger.Trace($"Отправка сообщения {_peoples[i].ChatId} и что отправляет {text}");
                 await botClient.SendTextMessageAsync(_peoples[i].ChatId, text);
                 Thread.Sleep(5000);
             }

@@ -11,12 +11,17 @@ namespace TelegramMessager
     public class Database
     {
         private MySqlConnection _mCon = new MySqlConnection(ConfigurationManager.ConnectionStrings["server"].ConnectionString);
-        private DateTimeNow _dateTimeClass = new DateTimeNow();
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
+        private DateTimeNow _dateTimeClass;
+        private ILogger _logger; 
 
         List<Data> datas;
         List<DataMount> mounts;
+
+        public Database(ILogger logger)
+        {
+            _logger = logger;
+            _dateTimeClass = new DateTimeNow(_logger);
+        }
 
         public async Task<List<Data>> GetDataNight()
         {
@@ -30,7 +35,7 @@ namespace TelegramMessager
                 {
                     if (_mCon.State == System.Data.ConnectionState.Closed)
                     {
-                        logger.Trace("Подключение бд");
+                        _logger.Trace("Подключение бд");
                         await _mCon.OpenAsync();
                     }
                 }
@@ -70,12 +75,12 @@ namespace TelegramMessager
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                logger.Error(ex, "Ошибка GetDataNight");
+                _logger.Error(ex, "Ошибка GetDataNight");
 
             }
             finally { _mCon.Close(); }
 
-            logger.Trace($"Возвращаем datas - {datas}");
+            _logger.Trace($"Возвращаем datas - {datas}");
             return datas;
         }
 
@@ -90,7 +95,7 @@ namespace TelegramMessager
                 {
                     if (_mCon.State == System.Data.ConnectionState.Closed)
                     {
-                        logger.Trace("Подключение бд");
+                        _logger.Trace("Подключение бд");
                         await _mCon.OpenAsync();
                     }
                 }
@@ -130,12 +135,12 @@ namespace TelegramMessager
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                logger.Error(ex, "Ошибка GetDataDay");
+                _logger.Error(ex, "Ошибка GetDataDay");
 
             }
             finally { _mCon.Close(); }
 
-            logger.Trace($"Возвращаем datas - {datas}");
+            _logger.Trace($"Возвращаем datas - {datas}");
 
             return datas;
 
@@ -151,24 +156,24 @@ namespace TelegramMessager
 
             if (enumDayOrNight == EnumDayOrNight.Day)
             {
-                logger.Trace($"enumDayOrNight == EnumDayOrNight.Day");
+                _logger.Trace($"enumDayOrNight == EnumDayOrNight.Day");
                 query = $"SELECT data_52, (count(dbid)-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) as count_1, round((count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) )* '4.32'), 2) as mas,concat(cast(sum(data_23) + sum(data_25) as char(10)),  ' / ', (round((((sum(data_23) + sum(data_25)) / (count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) * '4.32'))), 1))) as Lime_sum,concat(cast(sum(data_27) + sum(data_29) as char(10)), ' / ', (round((((sum(data_27) + sum(data_29)) / (count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) * '4.32'))), 1))) as Cement_sum,  concat(cast(round(sum(data_116), 1) as char(10)), ' / ', (round((sum(data_116) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Gips,concat(cast(round(sum(data_181), 1) as char(10)), ' / ', (round((sum(data_181) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Sand, concat(cast(round(sum(data_162), 3) as char(10)), ' / ', (round((sum(data_162) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Additive, concat(cast(round((sum(data_193) + sum(data_199)), 2) as char(10)), ' / ', (round(((sum(data_193) + sum(data_199)) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 2))) as alum,concat(cast(round((count(dbid) * '4.32' * '0.8'), 2) as char(10)), ' / ', '0.8') as drob, (select sum(sum_er) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) as brak from spslogger.mixreport as mr where  Timestamp >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and Timestamp < concat( date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')   group by data_52";
             }
             else
             {
-                logger.Trace($"enumDayOrNight == EnumDayOrNight.Night");
+                _logger.Trace($"enumDayOrNight == EnumDayOrNight.Night");
 
                 var FirstDay = new DateTime(_dateTimeNow.Year, _dateTimeNow.Month, 1);
                 if(FirstDay.Day == _dateTimeNow.Day)
                 {
-                    logger.Trace($"FirstDay.Day == _dateTimeNow.Day ({FirstDay.Day} == {_dateTimeNow.Day})");
+                    _logger.Trace($"FirstDay.Day == _dateTimeNow.Day ({FirstDay.Day} == {_dateTimeNow.Day})");
 
                     _dateTimeFirstMount = _dateTimeFirstMount.AddMonths(-1);
                     query = $"SELECT data_52, (count(dbid)-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) as count_1, round((count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) )* '4.32'), 2) as mas,concat(cast(sum(data_23) + sum(data_25) as char(10)),  ' / ', (round((((sum(data_23) + sum(data_25)) / (count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) * '4.32'))), 1))) as Lime_sum,concat(cast(sum(data_27) + sum(data_29) as char(10)), ' / ', (round((((sum(data_27) + sum(data_29)) / (count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) * '4.32'))), 1))) as Cement_sum,  concat(cast(round(sum(data_116), 1) as char(10)), ' / ', (round((sum(data_116) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Gips,concat(cast(round(sum(data_181), 1) as char(10)), ' / ', (round((sum(data_181) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Sand, concat(cast(round(sum(data_162), 3) as char(10)), ' / ', (round((sum(data_162) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Additive, concat(cast(round((sum(data_193) + sum(data_199)), 2) as char(10)), ' / ', (round(((sum(data_193) + sum(data_199)) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 2))) as alum,concat(cast(round((count(dbid) * '4.32' * '0.8'), 2) as char(10)), ' / ', '0.8') as drob, (select sum(sum_er) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) as brak from spslogger.mixreport as mr where  Timestamp >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and Timestamp < concat( date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')   group by data_52";
                 }
                 else
                 {
-                    logger.Trace($"FirstDay.Day = _dateTimeNow.Day ({FirstDay.Day} != {_dateTimeNow.Day})");
+                    _logger.Trace($"FirstDay.Day = _dateTimeNow.Day ({FirstDay.Day} != {_dateTimeNow.Day})");
 
                     query = $"SELECT data_52, (count(dbid)-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) as count_1, round((count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) )* '4.32'), 2) as mas,concat(cast(sum(data_23) + sum(data_25) as char(10)),  ' / ', (round((((sum(data_23) + sum(data_25)) / (count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) * '4.32'))), 1))) as Lime_sum,concat(cast(sum(data_27) + sum(data_29) as char(10)), ' / ', (round((((sum(data_27) + sum(data_29)) / (count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) * '4.32'))), 1))) as Cement_sum,  concat(cast(round(sum(data_116), 1) as char(10)), ' / ', (round((sum(data_116) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Gips,concat(cast(round(sum(data_181), 1) as char(10)), ' / ', (round((sum(data_181) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Sand, concat(cast(round(sum(data_162), 3) as char(10)), ' / ', (round((sum(data_162) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 1))) as Additive, concat(cast(round((sum(data_193) + sum(data_199)), 2) as char(10)), ' / ', (round(((sum(data_193) + sum(data_199)) / count(dbid-(select ifnull(sum(sum_er),0) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) ) / '4.32'), 2))) as alum,concat(cast(round((count(dbid) * '4.32' * '0.8'), 2) as char(10)), ' / ', '0.8') as drob, (select sum(sum_er) as brak from spslogger.error_mas as ms where mr.data_52 = ms.recepte and ms.data_err >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and ms.data_err < concat(date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')) as brak from spslogger.mixreport as mr where  Timestamp >= '{_dateTimeFirstMount.ToString("yyyy-MM-dd")} 08:00:00' and Timestamp < concat( date_add('{_dateTimeNow.ToString("yyyy-MM-dd")}', interval 1 day), ' 08:00:00')   group by data_52";
                 }
@@ -181,7 +186,7 @@ namespace TelegramMessager
                 {
                     if (_mCon.State == System.Data.ConnectionState.Closed)
                     {
-                        logger.Trace("Подключение бд");
+                        _logger.Trace("Подключение бд");
                         await _mCon.OpenAsync();
                     }
                 }
@@ -209,7 +214,7 @@ namespace TelegramMessager
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                logger.Error(ex, "Ошибка GetMountData");
+                _logger.Error(ex, "Ошибка GetMountData");
 
             }
             finally { _mCon.Close(); }
