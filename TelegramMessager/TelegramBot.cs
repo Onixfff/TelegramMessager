@@ -12,9 +12,9 @@ namespace TelegramMessager
 
         public TelegramBot(List<People> peoples, ILogger logger)
         {
-            _logger.Trace($"Инициализация TelegramBot");
-            _peoples = peoples;
             _logger = logger;
+            _peoples = peoples;
+            _logger.Trace($"Инициализация TelegramBot");
         }
 
         public async void SendMessage( string text)
