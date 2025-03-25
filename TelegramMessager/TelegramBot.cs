@@ -17,7 +17,7 @@ namespace TelegramMessager
             _logger.Trace($"Инициализация TelegramBot");
         }
 
-        public async void SendMessage( string text)
+        public async void SendMessage(string text)
         {
             _logger.Trace($"Вход в метод по отправке сообщения из телеграмм бота");
             TelegramBotClient botClient = new TelegramBotClient("6797439955:AAHA_jPPUvpRdIVdIEt2ZeTPkXketnLEnro");

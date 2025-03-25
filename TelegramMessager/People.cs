@@ -4,7 +4,7 @@
     {
         public long ChatId { get; private set; }
 
-        public People(long chatId) 
+        public People(long chatId)
         {
             ChatId = chatId;
         }

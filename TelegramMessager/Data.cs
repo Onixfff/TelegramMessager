@@ -6,7 +6,7 @@
         public EnumDayOrNight IsDay { get; private set; }
         public string Text { get; private set; }
         public int Count { get; private set; }
-        public double LongCount {  get; private set; }
+        public double LongCount { get; private set; }
 
         public Data(string date, EnumDayOrNight isDay, string text, int count, double longCount)
         {

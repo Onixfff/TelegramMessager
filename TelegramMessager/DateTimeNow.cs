@@ -8,7 +8,7 @@ namespace TelegramMessager
         private static DateTime _dateTimeNow = DateTime.Now;
         private ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public DateTimeNow(ILogger logger) 
+        public DateTimeNow(ILogger logger)
         {
             _logger = logger;
         }

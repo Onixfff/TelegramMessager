@@ -12,7 +12,7 @@ namespace TelegramMessager
     {
         private MySqlConnection _mCon = new MySqlConnection(ConfigurationManager.ConnectionStrings["server"].ConnectionString);
         private DateTimeNow _dateTimeClass;
-        private ILogger _logger; 
+        private ILogger _logger;
 
         List<Data> datas;
         List<DataMount> mounts;
@@ -164,7 +164,7 @@ namespace TelegramMessager
                 _logger.Trace($"enumDayOrNight == EnumDayOrNight.Night");
 
                 var FirstDay = new DateTime(_dateTimeNow.Year, _dateTimeNow.Month, 1);
-                if(FirstDay.Day == _dateTimeNow.Day)
+                if (FirstDay.Day == _dateTimeNow.Day)
                 {
                     _logger.Trace($"FirstDay.Day == _dateTimeNow.Day ({FirstDay.Day} == {_dateTimeNow.Day})");
 

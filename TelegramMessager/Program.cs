@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.ServiceProcess;
 using System.Threading;
 
 namespace TelegramMessager
@@ -10,10 +11,28 @@ namespace TelegramMessager
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
         private static DateTimeNow DateTimeNow;
-        
+
         static void Main(string[] args)
         {
-            
+            if (args.Length > 0 && args[0].ToLower() == "/service")
+            {
+                // Запуск как служба Windows
+                ServiceBase[] ServicesToRun = new ServiceBase[]
+                {
+                    new TelegramService()
+                };
+                ServiceBase.Run(ServicesToRun);
+            }
+            else
+            {
+                // Запуск как консольное приложение
+                RunMainLogic();
+            }
+        }
+
+        // Основная логика программы, вынесенная в отдельный метод
+        public static void RunMainLogic()
+        {
             _logger.Trace("Инциализация программы !");
 
             DateTimeNow = new DateTimeNow(_logger);
@@ -212,7 +231,7 @@ namespace TelegramMessager
 
                             text += $"\n                                 Итоги\n" +
                                 $"{countMas} массива / {countM3} m3";
-                            
+
                             _logger.Trace($"Вывод text для дня = ({text})");
 
                             double countMountMas = 0;
@@ -247,7 +266,7 @@ namespace TelegramMessager
                             }
 
                             text += $"\n               Итоги за этот периуд\n {countMountMas} массива / {countMountM3} m3";
-                            
+
                             _logger.Trace($"Данные Text для месяца = ({text})");
 
                             telegramBot.SendMessage(text);
