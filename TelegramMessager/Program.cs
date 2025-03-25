@@ -31,7 +31,7 @@ namespace TelegramMessager
         }
 
         // Основная логика программы, вынесенная в отдельный метод
-        public static void RunMainLogic()
+        public static async void RunMainLogic()
         {
             _logger.Trace("Инциализация программы !");
 
@@ -75,17 +75,11 @@ namespace TelegramMessager
                     _logger.Trace($"Начал проход по try в Program");
 
                     bool isFurstStart = true;
-                    List<People> peoples = new List<People>()
-                    {
-                        new People(787471566),
-                        new People(961317657), //Владимир Викторович
-                        new People(1973965023), //Татьяна Владимировна
-                        new People(805032669) // Артем Данишевский
-                    };
 
+                    Peoples peoples = new Peoples();
                     EnumDayOrNight enumDateDayOrNight = EnumDayOrNight.Night;
-                    Database database = new Database(_logger);
-                    TelegramBot telegramBot = new TelegramBot(peoples, _logger);
+                    Database database = await Database.CreateDbAsync(_logger);
+                    TelegramBot telegramBot = new TelegramBot(peoples.GetListPeoples(), _logger);
                     List<Data> datas = new List<Data>();
                     _logger.Trace($"Инициализирует list<Data>");
                     List<DataMount> mounts = new List<DataMount>();

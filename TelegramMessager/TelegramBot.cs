@@ -29,5 +29,10 @@ namespace TelegramMessager
                 Thread.Sleep(5000);
             }
         }
+
+        public void Dispose()
+        {
+            SendMessage("Завершение работы бота");
+        }
     }
 }

@@ -3,24 +3,77 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace TelegramMessager
 {
 
     public class Database
     {
-        private MySqlConnection _mCon = new MySqlConnection(ConfigurationManager.ConnectionStrings["server"].ConnectionString);
+        private static MySqlConnection _mCon = new MySqlConnection(ConfigurationManager.ConnectionStrings["operator"].ConnectionString);
         private DateTimeNow _dateTimeClass;
         private ILogger _logger;
+        private ClassLibraryGetIp.Main _mainInstance = new ClassLibraryGetIp.Main();
 
         List<Data> datas;
         List<DataMount> mounts;
 
-        public Database(ILogger logger)
+        private Database(ILogger logger)
         {
             _logger = logger;
             _dateTimeClass = new DateTimeNow(_logger);
+        }
+
+        public static async Task<Database> CreateDbAsync(ILogger logger)
+        {
+            var db = new Database(logger);
+            await db.ChangeIp();
+            return db;
+        }
+
+        private async Task ChangeIp()
+        {
+            var result = (await ChangeMconAsync("operator", ConfigurationManager.ConnectionStrings["operator"].ConnectionString));
+
+            if (result.error != null)
+            {
+                throw new Exception(result.error);
+            }
+            else
+            {
+                _mCon = new MySqlConnection(result.updateConnection);
+            }
+        }
+
+        private async Task<(string updateConnection, string error)> ChangeMconAsync(string nameIp, string _connectionString)
+        {
+            var ip = await _mainInstance.GetIp(nameIp);
+            string error;
+
+            try
+            {
+                if (ip.GetIp() != null)
+                {
+                    string updatedConnectionString = Regex.Replace(_connectionString, @"(?i)server=[^;]+", $"Server={ip.GetIp()}", RegexOptions.IgnoreCase);
+                    return (updatedConnectionString, null);
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                error = "Не получилось соеденится с сервером. Попробуйте позже...";
+                MessageBox.Show(error);
+                return (null, error);
+            }
+            catch (Exception)
+            {
+                error = "Непредвиденная ошибка. Повторите попытку позже или свяжитесь с администратором";
+                MessageBox.Show(error);
+                return (null, error);
+            }
+
+            return (null, "Неизвестная ошибка.");
         }
 
         public async Task<List<Data>> GetDataNight()
