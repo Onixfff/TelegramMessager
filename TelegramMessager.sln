@@ -5,6 +5,10 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramMessager", "TelegramMessager\TelegramMessager.csproj", "{B618272C-5CA9-4719-AE91-BA39CEF89AB6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{A1B438BD-8831-4B0D-83EF-63E7584B8AC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibraryGetIp", "Library\ClassLibraryGetIp\ClassLibraryGetIp\ClassLibraryGetIp.csproj", "{EF7FE000-5485-4384-9D25-1CF40ECD5E9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{B618272C-5CA9-4719-AE91-BA39CEF89AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B618272C-5CA9-4719-AE91-BA39CEF89AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B618272C-5CA9-4719-AE91-BA39CEF89AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF7FE000-5485-4384-9D25-1CF40ECD5E9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF7FE000-5485-4384-9D25-1CF40ECD5E9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF7FE000-5485-4384-9D25-1CF40ECD5E9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF7FE000-5485-4384-9D25-1CF40ECD5E9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EF7FE000-5485-4384-9D25-1CF40ECD5E9B} = {A1B438BD-8831-4B0D-83EF-63E7584B8AC2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20C606A0-B523-4EB6-A077-DE097A60D7D1}

@@ -175,7 +175,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Bat\config.ini" />
-    <None Include="Librari\ClassLibraryGetIp.csproj" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
