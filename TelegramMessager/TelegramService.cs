@@ -44,9 +44,6 @@ namespace TelegramMessager
         protected override void OnStart(string[] args)
         {
             _logger.Info("Служба запускается...");
-            _dateTimeNow = new DateTimeNow(_logger);
-            Peoples peoples = new Peoples();
-            _bot = new TelegramBot(peoples.GetListPeoples(), _logger);
             // Запускаем основную логику в отдельном потоке
             System.Threading.Tasks.Task.Run(() => Program.RunMainLogic());
             _logger.Info("Служба запущена");

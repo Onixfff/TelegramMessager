@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TelegramMessager
 {
@@ -13,7 +14,7 @@ namespace TelegramMessager
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
         private static DateTimeNow DateTimeNow;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             if (args.Length > 0 && args[0].ToLower() == "/service")
             {
@@ -27,48 +28,42 @@ namespace TelegramMessager
             else
             {
                 // Запуск как консольное приложение
-                RunMainLogic();
+                await RunMainLogic();
             }
         }
 
         // Основная логика программы, вынесенная в отдельный метод
-        public static async void RunMainLogic()
+        public static async Task RunMainLogic()
         {
-            _logger.Trace("Инциализация программы !");
-
-            DateTimeNow = new DateTimeNow(_logger);
-
-            bool onlyInstance = true;
-            string procName = Process.GetCurrentProcess().ProcessName;
-            Properties.Settings.Default.procname = procName;
-            int c = 0;
-
-            Process[] processes = Process.GetProcesses();
-
-            foreach (Process process in processes)
+            while (true)
             {
-                if (process.ProcessName.Contains(procName))
-                {
-                    c++;
+                _logger.Trace("Инциализация программы !");
 
-                    if (c > 1)
+                DateTimeNow = new DateTimeNow(_logger);
+
+                string procName = Process.GetCurrentProcess().ProcessName;
+                Properties.Settings.Default.procname = procName;
+                int c = 0;
+
+                Process[] processes = Process.GetProcesses();
+
+                foreach (Process process in processes)
+                {
+                    if (process.ProcessName.Contains(procName))
                     {
-                        onlyInstance = false;
-                        _logger.Trace("Найден такой же процесс");
+                        c++;
+
+                        if (c > 1)
+                        {
+                            _logger.Trace("Найден такой же процесс");
+                            process.Close();
+                            _logger.Trace("Программа закрывается");
+                            process.Dispose();
+                            _logger.Trace("Dispose process");
+                        }
                     }
                 }
-            }
-
-            _logger.Trace($"onlyInstance = {onlyInstance}.");
-
-            if (!onlyInstance)
-            {
-                _logger.Error(new Exception("Ошибка повторного запуска программы"), "Найден такой-же процесс");
-                Thread.Sleep(1000);
-                return;
-            }
-            else
-            {
+                 
                 _logger.Trace($"Запуск программы " + procName);
 
                 try

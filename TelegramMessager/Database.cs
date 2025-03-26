@@ -37,7 +37,7 @@ namespace TelegramMessager
         {
             bool isCopmlite = false;
 
-            var result = (await ChangeMconAsync("operator", ConfigurationManager.ConnectionStrings["operator"].ConnectionString));
+            var result = await ChangeMconAsync("operator", ConfigurationManager.ConnectionStrings["operator"].ConnectionString);
 
             if (result.error != null)
             {
