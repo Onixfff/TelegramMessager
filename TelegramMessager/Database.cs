@@ -29,12 +29,14 @@ namespace TelegramMessager
         public static async Task<Database> CreateDbAsync(ILogger logger)
         {
             var db = new Database(logger);
-            await db.ChangeIp();
+            var result = await db.ChangeIp();
             return db;
         }
 
-        private async Task ChangeIp()
+        private async Task<bool> ChangeIp()
         {
+            bool isCopmlite = false;
+
             var result = (await ChangeMconAsync("operator", ConfigurationManager.ConnectionStrings["operator"].ConnectionString));
 
             if (result.error != null)
@@ -43,8 +45,11 @@ namespace TelegramMessager
             }
             else
             {
+                isCopmlite = true;
                 _mCon = new MySqlConnection(result.updateConnection);
             }
+
+            return isCopmlite;
         }
 
         private async Task<(string updateConnection, string error)> ChangeMconAsync(string nameIp, string _connectionString)

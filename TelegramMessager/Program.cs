@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.ServiceProcess;
 using System.Threading;
 
@@ -135,32 +136,8 @@ namespace TelegramMessager
                                 var minut = currentTime.Minute;
                                 var second = currentTime.Second;
 
-                                targetTime = new TimeSpan(8, 5, 0) - new TimeSpan(hour, minut, second);
+                                targetTime = (new TimeSpan(8, 5, 0) - new TimeSpan(hour, minut, second)).Duration();
 
-                                hour = targetTime.Hours;
-                                minut = targetTime.Minutes;
-                                second = targetTime.Minutes;
-
-                                if (hour < 0)
-                                {
-                                    _logger.Trace($"Hour < 0");
-                                    hour *= -1;
-                                }
-
-                                if (minut < 0)
-                                {
-                                    _logger.Trace($"minut < 0");
-
-                                    hour *= -1;
-                                }
-
-                                if (second < 0)
-                                {
-                                    _logger.Trace($"second < 0");
-                                    second *= -1;
-                                }
-
-                                targetTime = new TimeSpan(hour, minut, second);
                                 _logger.Trace($"targetTime = {targetTime}");
                             }
 
@@ -171,6 +148,7 @@ namespace TelegramMessager
 
                             _logger.Trace($"Ожидает до {startTime} время сейчас {dateTimeNow}");
                             Console.WriteLine($"Ожидает до {startTime} время сейчас {dateTimeNow}");
+
                             Thread.Sleep(startTime);
                             continue;
                         }
