@@ -101,7 +101,7 @@ goto :menu
 
 :check_service_exists
 sc query "%ServiceName%" >nul 2>&1
-if errorlevel 1 (
+if errorlevel neq 0 (
     echo Служба "%ServiceName%" не установлена в системе
     exit /b 1
 )
@@ -109,7 +109,7 @@ exit /b 0
 
 :check_service_running
 sc query "%ServiceName%" | find "RUNNING" >nul
-if errorlevel 1 (
+if errorlevel neq 0 (
     echo Служба "%ServiceName%" не запущена
     exit /b 1
 )
@@ -175,7 +175,7 @@ goto :menu
 :start
 echo Проверка службы...
 call :check_service_exists
-if errorlevel 1 (
+if %errorlevel% neq 0 (
     echo Служба "%ServiceName%" не установлена
     echo Сначала установите службу (пункт 1)
     pause
@@ -183,7 +183,7 @@ if errorlevel 1 (
 )
 
 call :check_service_running
-if not errorlevel 1 (
+if not errorlevel equ 0 (
     echo Служба "%ServiceName%" уже запущена
     pause
     goto :menu
@@ -191,6 +191,11 @@ if not errorlevel 1 (
 
 echo Запуск службы...
 sc start "%ServiceName%"
+if %errorlevel% neq 0 (
+    echo Не удалось запустить службу "%ServiceName%"
+    pause
+    goto :menu
+)
 echo Служба запущена
 pause
 goto :menu
