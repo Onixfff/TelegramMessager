@@ -1,3 +1,4 @@
+chcp 65001 >nul
 @echo off
 setlocal enabledelayedexpansion
 
@@ -8,6 +9,7 @@ set "CONFIG_FILE=%SCRIPT_DIR%config.ini"
 :: Проверка наличия конфигурационного файла
 if not exist "%CONFIG_FILE%" (
     echo Ошибка: Файл конфигурации не найден: %CONFIG_FILE%
+    pause
     goto :EOF
 )
 
@@ -19,14 +21,17 @@ for /f "tokens=1,2 delims==" %%a in ('type "%CONFIG_FILE%" ^| findstr /v "^;"') 
 :: Проверка наличия обязательных параметров
 if not defined RestartInterval (
     echo Ошибка: В config.ini не указан параметр RestartInterval
+    pause
     goto :EOF
 )
 if not defined ResetCounterInterval (
     echo Ошибка: В config.ini не указан параметр ResetCounterInterval
+    pause
     goto :EOF
 )
 if not defined RestartAttempts (
     echo Ошибка: В config.ini не указан параметр RestartAttempts
+    pause
     goto :EOF
 )
 
@@ -45,6 +50,7 @@ if "%ExePath:~0,1%" == "." (
 :: Проверяем существование exe
 if not exist "!FULL_EXE_PATH!" (
     echo Ошибка: Исполняемый файл не найден: !FULL_EXE_PATH!
+    pause
     goto :EOF
 )
 
