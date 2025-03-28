@@ -103,17 +103,17 @@ goto :menu
 sc query "%ServiceName%" >nul 2>&1
 if errorlevel 1 (
     echo Служба "%ServiceName%" не установлена в системе
-    return 1
+    exit /b 1
 )
-return 0
+exit /b 0
 
 :check_service_running
 sc query "%ServiceName%" | find "RUNNING" >nul
 if errorlevel 1 (
     echo Служба "%ServiceName%" не запущена
-    return 1
+    exit /b 1
 )
-return 0
+exit /b 0
 
 :install
 echo Проверка службы...
