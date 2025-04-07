@@ -101,16 +101,22 @@ goto :menu
 
 :check_service_exists
 sc query "%ServiceName%" >nul 2>&1
-if errorlevel neq 0 (
+
+:: Если служба существует, errorlevel будет 0.
+:: Если не существует то errorlevel >= 1
+if errorlevel 1 (
     echo Служба "%ServiceName%" не установлена в системе
     exit /b 1
 )
 exit /b 0
 
 :check_service_running
-sc query "%ServiceName%" | find "RUNNING" >nul
-if errorlevel neq 0 (
-    echo Служба "%ServiceName%" не запущена
+
+sc query "%ServiceName%" | findstr "RUNNING" >nul
+
+::errorlevel 1 означает, что команда find не нашла строки "RUNNING"
+if errorlevel 1 (
+    echo Служба "%ServiceName%" не запущена.
     exit /b 1
 )
 exit /b 0
@@ -129,21 +135,16 @@ if not errorlevel 1 (
 echo Установка службы...
 if /i "%ProgramType%"=="Core" (
     sc create "%ServiceName%" binPath= "!FULL_EXE_PATH!" displayname= "%DisplayName%" start= auto obj= %ServiceAccount%
-    sc description "%ServiceName%" "%Description%"
-    if "%RestartAttempts%"=="-1" (
-        sc failure "%ServiceName%" reset= %ResetCounterInterval% actions= restart/%RestartInterval%/restart/%RestartInterval%/restart/%RestartInterval%
-    ) else (
-        sc failure "%ServiceName%" reset= %ResetCounterInterval% actions= restart/%RestartInterval%
-    )
 ) else (
     sc create "%ServiceName%" binPath= "!FULL_EXE_PATH! /service" displayname= "%DisplayName%" start= auto obj= %ServiceAccount% type= own
-    sc description "%ServiceName%" "%Description%"
-    if "%RestartAttempts%"=="-1" (
-        sc failure "%ServiceName%" reset= %ResetCounterInterval% actions= restart/%RestartInterval%/restart/%RestartInterval%/restart/%RestartInterval%
-    ) else (
-        sc failure "%ServiceName%" reset= %ResetCounterInterval% actions= restart/%RestartInterval%
-    )
 )
+sc description "%ServiceName%" "%Description%"
+if "%RestartAttempts%"=="-1" (
+    sc failure "%ServiceName%" reset= %ResetCounterInterval% actions= restart/%RestartInterval%/restart/%RestartInterval%/restart/%RestartInterval%
+) else (
+    sc failure "%ServiceName%" reset= %ResetCounterInterval% actions= restart/%RestartInterval%
+)
+
 echo Служба установлена и настроена на автоматический перезапуск
 echo - Интервал перезапуска: %RestartInterval% мс
 echo - Сброс счетчика: %ResetCounterInterval% сек
@@ -156,17 +157,22 @@ pause
 goto :menu
 
 :uninstall
-echo Проверка службы...
+echo Проверка что служба установлена...
+
 call :check_service_exists
 if errorlevel 1 (
-    echo Служба "%ServiceName%" не установлена
-    echo Нет необходимости в удалении
+    echo Такой службы найдено не было
     pause
     goto :menu
 )
 
+echo Проверка что служба запущена ...
+call :check_service_running
+if not errorlevel 1 (
+    sc stop "%ServiceName%"
+)
+
 echo Удаление службы...
-sc stop "%ServiceName%"
 sc delete "%ServiceName%"
 echo Служба успешно удалена
 pause
@@ -175,24 +181,23 @@ goto :menu
 :start
 echo Проверка службы...
 call :check_service_exists
-if %errorlevel% neq 0 (
-    echo Служба "%ServiceName%" не установлена
-    echo Сначала установите службу (пункт 1)
+if errorlevel 1 (
+    echo Не прошёл проверку службы.
     pause
     goto :menu
 )
 
 call :check_service_running
-if not errorlevel equ 0 (
-    echo Служба "%ServiceName%" уже запущена
+if not errorlevel 1 (
+    echo уже запущен
     pause
     goto :menu
 )
 
 echo Запуск службы...
 sc start "%ServiceName%"
-if %errorlevel% neq 0 (
-    echo Не удалось запустить службу "%ServiceName%"
+if not errorlevel 1 (
+    echo Не прошёл проверку службы после запуска
     pause
     goto :menu
 )

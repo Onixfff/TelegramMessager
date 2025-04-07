@@ -175,6 +175,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Bat\update_nlog.bat" />
     <None Include="Bat\config.ini" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
