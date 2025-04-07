@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.ServiceProcess;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace TelegramMessager
@@ -12,7 +10,7 @@ namespace TelegramMessager
     public class Program
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
-        private static DateTimeNow DateTimeNow;
+        private static DateTimeNow _dateTimeNow;
 
         static async Task Main(string[] args)
         {
@@ -39,7 +37,7 @@ namespace TelegramMessager
             {
                 _logger.Trace("Инциализация программы !");
 
-                DateTimeNow = new DateTimeNow(_logger);
+                _dateTimeNow = new DateTimeNow(_logger);
 
                 string procName = Process.GetCurrentProcess().ProcessName;
                 Properties.Settings.Default.procname = procName;
@@ -87,8 +85,8 @@ namespace TelegramMessager
                     while (true)
                     {
                         _logger.Trace($"Начало цикла While(true)");
-                        DateTimeNow.ChangeDateTime();
-                        DateTime dateTimeNow = DateTimeNow.GetDateTimeNow();
+                        _dateTimeNow.ChangeDateTime();
+                        DateTime dateTimeNow = _dateTimeNow.GetDateTimeNow();
                         TimeSpan startTime = new TimeSpan(dateTimeNow.Hour, dateTimeNow.Minute, dateTimeNow.Second);
 
                         var sw = new Stopwatch();
@@ -144,7 +142,7 @@ namespace TelegramMessager
                             _logger.Trace($"Ожидает до {startTime} время сейчас {dateTimeNow}");
                             Console.WriteLine($"Ожидает до {startTime} время сейчас {dateTimeNow}");
 
-                            Thread.Sleep(startTime);
+                            await Task.Delay(startTime);
                             continue;
                         }
                         else
@@ -297,7 +295,7 @@ namespace TelegramMessager
                         _logger.Trace("Время окончания - " + dateTimeNow + "\nОжидать до следующего вызова " + startTime);
                         Console.WriteLine("Время окончания - " + dateTimeNow + "\nОжидать до следующего вызова " + startTime + "\n");
                         _logger.Trace($"Уход в ожидание");
-                        Thread.Sleep(startTime);
+                        await Task.Delay(startTime);
                     }
                 }
                 catch (Exception ex)

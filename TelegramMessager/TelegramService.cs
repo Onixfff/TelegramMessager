@@ -8,7 +8,6 @@ namespace TelegramMessager
     public class TelegramService : ServiceBase
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
-        private static DateTimeNow _dateTimeNow;
         private TelegramBot _bot;
 
         public TelegramService()
