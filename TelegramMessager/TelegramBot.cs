@@ -1,6 +1,7 @@
 ﻿using NLog;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Bot;
 
 namespace TelegramMessager
@@ -17,7 +18,7 @@ namespace TelegramMessager
             _logger.Trace($"Инициализация TelegramBot");
         }
 
-        public async void SendMessage(string text)
+        public async Task SendMessageAsync(string text)
         {
             _logger.Trace($"Вход в метод по отправке сообщения из телеграмм бота");
             TelegramBotClient botClient = new TelegramBotClient("6797439955:AAHA_jPPUvpRdIVdIEt2ZeTPkXketnLEnro");
@@ -26,13 +27,13 @@ namespace TelegramMessager
             {
                 _logger.Trace($"Отправка сообщения {_peoples[i].ChatId} и что отправляет {text}");
                 await botClient.SendTextMessageAsync(_peoples[i].ChatId, text);
-                Thread.Sleep(5000);
             }
+            Thread.Sleep(5000);
         }
 
         public void Dispose()
         {
-            SendMessage("Завершение работы бота");
+            SendMessageAsync("Завершение работы бота");
         }
     }
 }

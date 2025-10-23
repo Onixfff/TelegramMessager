@@ -2,13 +2,16 @@
 using NLog;
 using System.IO;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TelegramMessager
 {
     public class TelegramService : ServiceBase
     {
-        private static ILogger _logger = LogManager.GetCurrentClassLogger();
-        private TelegramBot _bot;
+        private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+        private CancellationTokenSource _cts;
+        private Task _mainTask;
 
         public TelegramService()
         {
@@ -43,19 +46,39 @@ namespace TelegramMessager
         protected override void OnStart(string[] args)
         {
             _logger.Info("Служба запускается...");
-            // Запускаем основную логику в отдельном потоке
-            System.Threading.Tasks.Task.Run(() => Program.RunMainLogic());
-            _logger.Info("Служба запущена");
+
+            _cts = new CancellationTokenSource();
+            _mainTask = Program.RunMainLogic(_cts.Token);
+
+            _logger.Info("Служба успешно запущена");
         }
 
         protected override void OnStop()
         {
             _logger.Info("Служба останавливается...");
-            // Здесь код для корректного завершения работы
-            if (_bot != null)
+
+            // Запрашиваем отмену
+            _cts?.Cancel();
+
+            // Ждём завершения основной задачи (но не вечно)
+            try
             {
-                _bot.Dispose();
+                // Даём 30 секунд на graceful shutdown (максимум для службы Windows)
+                _mainTask?.Wait(TimeSpan.FromSeconds(30));
             }
+            catch (AggregateException ex)
+            {
+                _logger.Warn(ex, "Исключения при ожидании завершения задачи");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Неожиданная ошибка при остановке");
+            }
+            finally
+            {
+                _cts?.Dispose();
+            }
+
             _logger.Info("Служба остановлена");
         }
     }

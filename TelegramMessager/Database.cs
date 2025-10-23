@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -81,7 +82,7 @@ namespace TelegramMessager
             return (null, "Неизвестная ошибка.");
         }
 
-        public async Task<List<Data>> GetDataNight()
+        public async Task<List<Data>> GetDataNight(CancellationToken token)
         {
             datas = new List<Data>();
             DateTime thisDay = _dateTimeClass.GetDateTimeMinus1Day();
@@ -142,7 +143,7 @@ namespace TelegramMessager
             return datas;
         }
 
-        public async Task<List<Data>> GetDataDay()
+        public async Task<List<Data>> GetDataDay(CancellationToken token)
         {
             datas = new List<Data>();
             DateTime thisDay = _dateTimeClass.GetDateTimeNow(); ;
@@ -204,7 +205,7 @@ namespace TelegramMessager
 
         }
 
-        public async Task<List<DataMount>> GetMountData(EnumDayOrNight enumDayOrNight)
+        public async Task<List<DataMount>> GetMountData(EnumDayOrNight enumDayOrNight, CancellationToken token)
         {
             mounts = new List<DataMount>();
             string query;
