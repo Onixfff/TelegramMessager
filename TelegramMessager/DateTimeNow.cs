@@ -16,7 +16,7 @@ namespace TelegramMessager
         public DateTime GetDateTimeNow()
         {
             _logger.Trace($"Возвращает время сейчас {DateTime.Now}");
-            return _dateTimeNow;
+            return DateTime.Now;
         }
 
         public void ChangeDateTime()
