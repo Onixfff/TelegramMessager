@@ -31,9 +31,9 @@ namespace TelegramMessager
             Thread.Sleep(5000);
         }
 
-        public void Dispose()
+        public async Task Dispose()
         {
-            SendMessageAsync("Завершение работы бота");
+            await SendMessageAsync("Завершение работы бота");
         }
     }
 }
