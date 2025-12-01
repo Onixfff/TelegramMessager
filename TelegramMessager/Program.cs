@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Google.Protobuf.WellKnownTypes;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,6 +17,13 @@ namespace TelegramMessager
 
         public static async Task Main(string[] args)
         {
+            // Защита от дубликатов процесса
+            if (IsAnotherInstanceRunning())
+            {
+                Console.WriteLine("Обнаружен другой запущенный экземпляр. Завершение.");
+                return;
+            }
+
             if (args.Length > 0)
             {
                 var arg = args[0];
@@ -125,9 +133,14 @@ namespace TelegramMessager
                 var initialDelay = CalculateInitialDelay(now);
                 _logger.Info($"Первичная задержка: {initialDelay}");
                 await Task.Delay(initialDelay, cancellationToken);
+                
+                //Инициализируем таймер (он будет гасить разницу во времени)
+                Stopwatch stopwatch = new Stopwatch();
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
+                    stopwatch.Restart();
+
                     now = dateTimeProvider.GetDateTimeNow();
                     _logger.Info($"Формирование отчёта за период: {currentPeriod} ({now:yyyy-MM-dd HH:mm})");
 
@@ -157,8 +170,14 @@ namespace TelegramMessager
                         ? EnumDayOrNight.Night
                         : EnumDayOrNight.Day;
 
+                    stopwatch.Stop();
+
+                    TimeSpan timeSleep = new TimeSpan(12, 0, 0);
+
+                    timeSleep -= stopwatch.Elapsed;
+
                     // Ждём 12 часов до следующего отчёта
-                    await Task.Delay(TimeSpan.FromHours(12), cancellationToken);
+                    await Task.Delay(timeSleep, cancellationToken);
                 }
             }
             catch (OperationCanceledException)
