@@ -257,7 +257,7 @@ namespace TelegramMessager
             Select:
                 using (MySqlCommand command = new MySqlCommand(query, _mCon))
                 {
-                    var s = _mCon.State;
+                    //var s = _mCon.State;
 
                     using (MySqlDataReader reader = (MySqlDataReader)await command.ExecuteReaderAsync())
                     {
