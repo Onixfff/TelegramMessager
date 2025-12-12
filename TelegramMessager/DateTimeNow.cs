@@ -5,7 +5,7 @@ namespace TelegramMessager
 {
     public class DateTimeNow
     {
-        private static DateTime _dateTimeNow = DateTime.Now;
+        private DateTime _dateTimeNow = DateTime.Now;
         private ILogger _logger = LogManager.GetCurrentClassLogger();
 
         public DateTimeNow(ILogger logger)
@@ -27,8 +27,7 @@ namespace TelegramMessager
 
         public DateTime GetFirstDateTimeMount()
         {
-
-            DateTime firstDayOfMonth = new DateTime(_dateTimeNow.Year, _dateTimeNow.Month, 1);
+            DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             _logger.Trace($"Возвращает первый день месяца {firstDayOfMonth}");
 
             return firstDayOfMonth;
@@ -36,9 +35,9 @@ namespace TelegramMessager
 
         public DateTime GetDateTimeMinus1Day()
         {
-            _logger.Trace($"Возвращает _dateTimeNow ( {_dateTimeNow.AddDays(-1)})");
+            _logger.Trace($"Возвращает _dateTimeNow ( {DateTime.Now.AddDays(-1)})");
 
-            return _dateTimeNow.AddDays(-1);
+            return DateTime.Now.AddDays(-1);
         }
     }
 }
